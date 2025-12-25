@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Mail, MapPin, Calendar } from "lucide-react";
-import { useState } from "react";
+import { Mail, MapPin, Calendar, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect } from "react";
 
 /**
  * GIST 2025 Abeokuta Hangout - Home Page
@@ -12,26 +12,41 @@ import { useState } from "react";
  */
 
 export default function Home() {
-  const [isRegistering, setIsRegistering] = useState(false);
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const registrationLink = "https://forms.gle/eymBQ4AGQYveqLh7A";
+  const sponsorshipLink = "https://wa.me/2348139721779";
 
-  const handleRegister = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email) {
-      setSubmitted(true);
-      setEmail("");
-      setTimeout(() => setSubmitted(false), 3000);
-    }
-  };
+  const carouselImages = [
+    { src: "/carousel-images/6B7A0575.jpg", alt: "GIST Event Moment 1" },
+    { src: "/carousel-images/6B7A0582.jpg", alt: "GIST Event Moment 2" },
+    { src: "/carousel-images/6B7A0792.jpg", alt: "GIST Event Moment 3" },
+    { src: "/carousel-images/6B7A0869.jpg", alt: "GIST Event Moment 4" },
+    { src: "/carousel-images/6B7A0929.jpg", alt: "GIST Event Moment 5" },
+    { src: "/carousel-images/WhatsApp Image 2025-12-25 at 17.06.39.jpeg", alt: "GIST Community" },
+    { src: "/carousel-images/WhatsApp Image 2025-12-25 at 17.10.192.jpeg", alt: "GIST Gathering" },
+    { src: "/carousel-images/WhatsApp Image 2025-12-25 at 17.10.20.jpeg", alt: "GIST Fellowship" },
+    { src: "/carousel-images/WhatsApp Image 2025-12-25 at 17.10.204.jpeg", alt: "GIST Memories" },
+  ];
+
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [carouselImages.length]);
+
+  const goToSlide = (index: number) => setCurrentSlide(index);
+  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + carouselImages.length) % carouselImages.length);
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Navigation */}
       <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="container flex items-center justify-between h-16">
-          <div className="text-2xl font-bold text-primary" style={{ fontFamily: "'Playfair Display', serif" }}>
-            GIST
+          <div className="flex items-center gap-2">
+            <img src="/images/YWB logo.png" alt="YWB Logo" className="h-10 w-auto" />
           </div>
           <div className="flex gap-4">
             <Button variant="ghost" size="sm">
@@ -40,8 +55,8 @@ export default function Home() {
             <Button variant="ghost" size="sm">
               What to Expect
             </Button>
-            <Button size="sm" className="bg-primary hover:bg-primary/90">
-              Register
+            <Button size="sm" className="bg-primary hover:bg-primary/90" asChild>
+              <a href={registrationLink} target="_blank" rel="noopener noreferrer">Register</a>
             </Button>
           </div>
         </div>
@@ -91,46 +106,22 @@ export default function Home() {
               <Button
                 size="lg"
                 className="bg-primary hover:bg-primary/90 text-white"
-                onClick={() => setIsRegistering(!isRegistering)}
+                asChild
               >
-                Register Now
+                <a href={registrationLink} target="_blank" rel="noopener noreferrer">Register Now</a>
               </Button>
               <Button
                 size="lg"
                 variant="outline"
                 className="border-primary/30 hover:bg-primary/5"
+                asChild
               >
-                Become a Sponsor
+                <a href={sponsorshipLink} target="_blank" rel="noopener noreferrer">Become a Sponsor</a>
               </Button>
             </div>
           </div>
         </div>
       </section>
-
-      {/* Registration Form - Inline */}
-      {isRegistering && (
-        <section className="py-12 bg-card/50">
-          <div className="container max-w-md">
-            <h2 className="text-display-sm mb-6">Join Us</h2>
-            <form onSubmit={handleRegister} className="space-y-4">
-              <input
-                type="email"
-                placeholder="Your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-                required
-              />
-              <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
-                Register
-              </Button>
-            </form>
-            {submitted && (
-              <p className="mt-4 text-center text-green-600">Thank you for registering!</p>
-            )}
-          </div>
-        </section>
-      )}
 
       {/* About Section */}
       <section className="py-20 bg-background">
@@ -235,34 +226,82 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Event Highlights Section */}
+      {/* Event Highlights Section - Carousel */}
       <section className="py-20 bg-background">
         <div className="container">
-          <h2 className="text-display-md mb-12">Event Highlights</h2>
+          <h2 className="text-display-md mb-12 text-center">Event Highlights</h2>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="relative overflow-hidden rounded-3xl shadow-lg h-96">
-              <img
-                src="/images/worship-moment.jpg"
-                alt="Worship moment"
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                <h3 className="text-2xl font-bold">Spiritual Connection</h3>
+          {/* Main Carousel */}
+          <div className="relative max-w-5xl mx-auto">
+            {/* Main Image */}
+            <div className="relative overflow-hidden rounded-3xl shadow-2xl aspect-[16/10]">
+              {carouselImages.map((image, index) => (
+                <div
+                  key={index}
+                  className={`absolute inset-0 transition-all duration-700 ease-in-out ${
+                    index === currentSlide
+                      ? "opacity-100 scale-100"
+                      : "opacity-0 scale-105"
+                  }`}
+                >
+                  <img
+                    src={image.src}
+                    alt={image.alt}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                </div>
+              ))}
+
+              {/* Caption */}
+              <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+                <p className="text-lg font-medium opacity-90">Memories from GIST</p>
+                <h3 className="text-3xl font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>
+                  Building Community Together
+                </h3>
               </div>
+
+              {/* Navigation Arrows */}
+              <button
+                onClick={prevSlide}
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition-all duration-300 flex items-center justify-center text-white group"
+                aria-label="Previous slide"
+              >
+                <ChevronLeft className="w-6 h-6 group-hover:scale-110 transition-transform" />
+              </button>
+              <button
+                onClick={nextSlide}
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition-all duration-300 flex items-center justify-center text-white group"
+                aria-label="Next slide"
+              >
+                <ChevronRight className="w-6 h-6 group-hover:scale-110 transition-transform" />
+              </button>
             </div>
 
-            <div className="relative overflow-hidden rounded-3xl shadow-lg h-96">
-              <img
-                src="/images/celebration-joy.jpg"
-                alt="Celebration and joy"
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+            {/* Thumbnail Navigation */}
+            <div className="flex justify-center gap-3 mt-6">
+              {carouselImages.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => goToSlide(index)}
+                  className={`transition-all duration-300 rounded-full ${
+                    index === currentSlide
+                      ? "w-8 h-3 bg-primary"
+                      : "w-3 h-3 bg-primary/30 hover:bg-primary/50"
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
+
+            {/* Progress Bar */}
+            <div className="mt-4 h-1 bg-primary/10 rounded-full overflow-hidden max-w-md mx-auto">
+              <div
+                className="h-full bg-primary transition-all duration-300 ease-linear"
+                style={{
+                  width: `${((currentSlide + 1) / carouselImages.length) * 100}%`
+                }}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                <h3 className="text-2xl font-bold">Community Joy</h3>
-              </div>
             </div>
           </div>
         </div>
@@ -279,15 +318,17 @@ export default function Home() {
             <Button
               size="lg"
               className="bg-white hover:bg-white/90 text-primary"
+              asChild
             >
-              Register Now
+              <a href={registrationLink} target="_blank" rel="noopener noreferrer">Register Now</a>
             </Button>
             <Button
               size="lg"
               variant="outline"
               className="border-white text-white hover:bg-white/10"
+              asChild
             >
-              Become a Sponsor
+              <a href={sponsorshipLink} target="_blank" rel="noopener noreferrer">Become a Sponsor</a>
             </Button>
           </div>
         </div>

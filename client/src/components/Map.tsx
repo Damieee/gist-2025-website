@@ -93,6 +93,9 @@ const FORGE_BASE_URL =
 const MAPS_PROXY_URL = `${FORGE_BASE_URL}/v1/maps/proxy`;
 
 function loadMapScript() {
+  if (!API_KEY) {
+    return Promise.resolve(null);
+  }
   return new Promise(resolve => {
     const script = document.createElement("script");
     script.src = `${MAPS_PROXY_URL}/maps/api/js?key=${API_KEY}&v=weekly&libraries=marker,places,geocoding,geometry`;
@@ -122,6 +125,19 @@ export function MapView({
   initialZoom = 12,
   onMapReady,
 }: MapViewProps) {
+  if (!API_KEY) {
+    return (
+      <div
+        className={cn(
+          "flex h-[300px] w-full items-center justify-center rounded border border-dashed border-border bg-muted text-sm text-muted-foreground",
+          className,
+        )}
+      >
+        Map preview disabled. Provide VITE_FRONTEND_FORGE_API_KEY to enable it.
+      </div>
+    );
+  }
+
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<google.maps.Map | null>(null);
 
