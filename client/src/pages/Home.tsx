@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Mail, MapPin, Calendar } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 
 /**
  * GIST 2025 Abeokuta Hangout - Home Page
@@ -25,6 +26,22 @@ export default function Home() {
     { src: "/carousel-images/WhatsApp Image 2025-12-25 at 17.10.20.jpeg", alt: "GIST Fellowship" },
     { src: "/carousel-images/WhatsApp Image 2025-12-25 at 17.10.204.jpeg", alt: "GIST Memories" },
   ];
+
+  // Video loading state and poster image cycling
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [posterIndex, setPosterIndex] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Cycle through poster images every 500ms while video loads
+  useEffect(() => {
+    if (videoLoaded) return;
+
+    const interval = setInterval(() => {
+      setPosterIndex((prev) => (prev + 1) % carouselImages.length);
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, [videoLoaded, carouselImages.length]);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -108,15 +125,24 @@ export default function Home() {
           </div>
 
           <div className="relative">
-            <div className="rounded-[32px] overflow-hidden shadow-2xl border border-white/40 bg-black/30 backdrop-blur">
+            <div className="rounded-[32px] overflow-hidden shadow-2xl border border-white/40 bg-black/30 backdrop-blur relative">
+              {/* Cycling poster images while video loads */}
+              {!videoLoaded && (
+                <img
+                  src={carouselImages[posterIndex].src}
+                  alt="Loading preview"
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              )}
               <video
+                ref={videoRef}
                 src="/gist%20ywb.mp4"
                 autoPlay
                 muted
                 loop
                 playsInline
-                poster="/images/hero-abeokuta.jpg"
-                className="w-full h-full object-cover"
+                onCanPlay={() => setVideoLoaded(true)}
+                className={`w-full h-full object-cover ${videoLoaded ? 'opacity-100' : 'opacity-0'}`}
               />
             </div>
             <div className="absolute -z-10 -right-10 bottom-6 w-32 h-32 rounded-full bg-primary/30 blur-3xl opacity-60" />
