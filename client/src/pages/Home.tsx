@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Mail, MapPin, Calendar, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Mail, MapPin, Calendar } from "lucide-react";
 
 /**
  * GIST 2025 Abeokuta Hangout - Home Page
@@ -26,19 +25,6 @@ export default function Home() {
     { src: "/carousel-images/WhatsApp Image 2025-12-25 at 17.10.20.jpeg", alt: "GIST Fellowship" },
     { src: "/carousel-images/WhatsApp Image 2025-12-25 at 17.10.204.jpeg", alt: "GIST Memories" },
   ];
-
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
-    }, 4000);
-    return () => clearInterval(timer);
-  }, [carouselImages.length]);
-
-  const goToSlide = (index: number) => setCurrentSlide(index);
-  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + carouselImages.length) % carouselImages.length);
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -73,7 +59,7 @@ export default function Home() {
         />
         <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background via-background/80 to-background" />
 
-        <div className="container">
+        <div className="container grid gap-12 lg:grid-cols-2 items-center">
           <div className="max-w-3xl">
             <div className="inline-block mb-6 px-4 py-2 bg-primary/10 rounded-full border border-primary/20">
               <p className="text-sm font-medium text-primary">4th Edition</p>
@@ -119,6 +105,22 @@ export default function Home() {
                 <a href={sponsorshipLink} target="_blank" rel="noopener noreferrer">Become a Sponsor</a>
               </Button>
             </div>
+          </div>
+
+          <div className="relative">
+            <div className="rounded-[32px] overflow-hidden shadow-2xl border border-white/40 bg-black/30 backdrop-blur">
+              <video
+                src="/gist%20ywb.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                poster="/images/hero-abeokuta.jpg"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="absolute -z-10 -right-10 bottom-6 w-32 h-32 rounded-full bg-primary/30 blur-3xl opacity-60" />
+            <div className="absolute -z-10 -left-6 top-6 w-24 h-24 rounded-full bg-secondary/20 blur-2xl opacity-70" />
           </div>
         </div>
       </section>
@@ -226,84 +228,55 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Event Highlights Section - Carousel */}
-      <section className="py-20 bg-background">
+      {/* Event Highlights Section - Continuous Sliding Carousel */}
+      <section className="py-20 bg-background overflow-hidden">
         <div className="container">
           <h2 className="text-display-md mb-12 text-center">Event Highlights</h2>
+        </div>
 
-          {/* Main Carousel */}
-          <div className="relative max-w-5xl mx-auto">
-            {/* Main Image */}
-            <div className="relative overflow-hidden rounded-3xl shadow-2xl aspect-[16/10]">
-              {carouselImages.map((image, index) => (
-                <div
-                  key={index}
-                  className={`absolute inset-0 transition-all duration-700 ease-in-out ${
-                    index === currentSlide
-                      ? "opacity-100 scale-100"
-                      : "opacity-0 scale-105"
-                  }`}
-                >
-                  <img
-                    src={image.src}
-                    alt={image.alt}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                </div>
-              ))}
+        {/* Infinite Sliding Carousel */}
+        <div className="relative w-full">
+          {/* Gradient overlays for smooth edges */}
+          <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
 
-              {/* Caption */}
-              <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
-                <p className="text-lg font-medium opacity-90">Memories from GIST</p>
-                <h3 className="text-3xl font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  Building Community Together
-                </h3>
-              </div>
-
-              {/* Navigation Arrows */}
-              <button
-                onClick={prevSlide}
-                className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition-all duration-300 flex items-center justify-center text-white group"
-                aria-label="Previous slide"
-              >
-                <ChevronLeft className="w-6 h-6 group-hover:scale-110 transition-transform" />
-              </button>
-              <button
-                onClick={nextSlide}
-                className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition-all duration-300 flex items-center justify-center text-white group"
-                aria-label="Next slide"
-              >
-                <ChevronRight className="w-6 h-6 group-hover:scale-110 transition-transform" />
-              </button>
-            </div>
-
-            {/* Thumbnail Navigation */}
-            <div className="flex justify-center gap-3 mt-6">
-              {carouselImages.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => goToSlide(index)}
-                  className={`transition-all duration-300 rounded-full ${
-                    index === currentSlide
-                      ? "w-8 h-3 bg-primary"
-                      : "w-3 h-3 bg-primary/30 hover:bg-primary/50"
-                  }`}
-                  aria-label={`Go to slide ${index + 1}`}
-                />
-              ))}
-            </div>
-
-            {/* Progress Bar */}
-            <div className="mt-4 h-1 bg-primary/10 rounded-full overflow-hidden max-w-md mx-auto">
+          {/* Sliding track */}
+          <div className="flex gap-6 animate-scroll">
+            {/* First set of images */}
+            {carouselImages.map((image, index) => (
               <div
-                className="h-full bg-primary transition-all duration-300 ease-linear"
-                style={{
-                  width: `${((currentSlide + 1) / carouselImages.length) * 100}%`
-                }}
-              />
-            </div>
+                key={`first-${index}`}
+                className="flex-shrink-0 w-[500px] h-[350px] rounded-2xl overflow-hidden shadow-lg group"
+              >
+                <img
+                  src={image.src}
+                  alt={image.alt}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+            ))}
+            {/* Duplicate set for seamless loop */}
+            {carouselImages.map((image, index) => (
+              <div
+                key={`second-${index}`}
+                className="flex-shrink-0 w-[500px] h-[350px] rounded-2xl overflow-hidden shadow-lg group"
+              >
+                <img
+                  src={image.src}
+                  alt={image.alt}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+            ))}
           </div>
+        </div>
+
+        {/* Caption below carousel */}
+        <div className="container mt-8 text-center">
+          <p className="text-lg font-medium text-primary">Memories from GIST</p>
+          <h3 className="text-2xl font-bold mt-2" style={{ fontFamily: "'Playfair Display', serif" }}>
+            Building Community Together
+          </h3>
         </div>
       </section>
 

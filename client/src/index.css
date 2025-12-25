@@ -210,7 +210,15 @@
     .container {
       padding-left: 2rem; /* 32px - desktop padding */
       padding-right: 2rem;
-      max-width: 1280px; /* Standard content width */
+      max-width: 1400px; /* Wider content for large screens */
+    }
+  }
+
+  @media (min-width: 1536px) {
+    .container {
+      padding-left: 3rem;
+      padding-right: 3rem;
+      max-width: 1600px; /* Extra wide for very large screens */
     }
   }
   
@@ -255,5 +263,23 @@
   
   .card-organic:hover {
     @apply shadow-md;
+  }
+
+  /* Continuous scrolling animation for carousel */
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-scroll {
+    animation: scroll 30s linear infinite;
+  }
+
+  .animate-scroll:hover {
+    animation-play-state: paused;
   }
 }
