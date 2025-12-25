@@ -125,15 +125,13 @@ export default function Home() {
           </div>
 
           <div className="relative">
-            <div className="rounded-[32px] overflow-hidden shadow-2xl border border-white/40 bg-black/30 backdrop-blur relative">
+            <div className="rounded-[32px] overflow-hidden shadow-2xl border border-white/40 bg-black/30 backdrop-blur relative aspect-[4/3]">
               {/* Cycling poster images while video loads */}
-              {!videoLoaded && (
-                <img
-                  src={carouselImages[posterIndex].src}
-                  alt="Loading preview"
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-              )}
+              <img
+                src={carouselImages[posterIndex].src}
+                alt="Loading preview"
+                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${videoLoaded ? 'opacity-0' : 'opacity-100'}`}
+              />
               <video
                 ref={videoRef}
                 src="/gist%20ywb.mp4"
@@ -142,7 +140,7 @@ export default function Home() {
                 loop
                 playsInline
                 onCanPlay={() => setVideoLoaded(true)}
-                className={`w-full h-full object-cover ${videoLoaded ? 'opacity-100' : 'opacity-0'}`}
+                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${videoLoaded ? 'opacity-100' : 'opacity-0'}`}
               />
             </div>
             <div className="absolute -z-10 -right-10 bottom-6 w-32 h-32 rounded-full bg-primary/30 blur-3xl opacity-60" />
